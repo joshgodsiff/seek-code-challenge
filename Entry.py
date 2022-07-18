@@ -1,30 +1,21 @@
-from datetime import datetime, timedelta
+from dataclasses import dataclass
+from datetime import datetime, timedelta, date
 
+@dataclass(order=True, frozen=True, kw_only=True)
 class Entry:
-  def __init__(self, time: datetime, num: int) -> None:
-    self.time = time
-    self.num = num
+  num: int
+  time: datetime
 
   def contiguous(self, other, delta: timedelta):
     return self.time + delta == other.time
 
-  def __eq__(self, other) -> bool:
-    return self.num == other.num and self.time == other.time
-	
-  def __ne__(self, other) -> bool:
-    return self.num != other.num and self.time != other.time
-	
-  def __lt__(self, other) -> bool:
-    return self.num < other.num and self.time < other.time
-	
-  def __le__(self, other) -> bool:
-    return self.num <= other.num and self.time <= other.time
-	
-  def __gt__(self, other) -> bool:
-    return self.num > other.num and self.time > other.time
-	
-  def __ge__(self, other) -> bool:
-    return self.num >= other.num and self.time < other.time
+  def __str__(self) -> str:
+    return f"{self.time.isoformat()} {self.num}"
+
+@dataclass(kw_only=True)
+class DayEntry:
+  num: int
+  time: date
 
   def __str__(self) -> str:
     return f"{self.time.isoformat()} {self.num}"
