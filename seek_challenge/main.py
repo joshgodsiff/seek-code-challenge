@@ -44,8 +44,8 @@ def processFile(filename):
   for e in results[top3]:
     print("  ", e)
 
-  print("Least seen in a 1.5 hour period:", sum([e.num for e in results[lowest3].q]))
-  for e in list(results[lowest3].q):
+  print("Least seen in a 1.5 hour period:", sum([e.num for e in results[lowest3]]))
+  for e in list(results[lowest3]):
       print("  ", e)
 
 if __name__ == "__main__":

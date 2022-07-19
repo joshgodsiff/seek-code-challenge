@@ -108,7 +108,7 @@ def sum_of_lowest_n_fold_should_be_the_sum_of_the_lowest_n_window(nums, time, n)
   zipped = list(zip(*lists))
   sums = [ sum([e.num for e in list(tpl)]) for tpl in zipped ]
 
-  sumResults = sum([e.num for e in results.q])
+  sumResults = sum([e.num for e in results])
 
   assert min(sums) == sumResults
 

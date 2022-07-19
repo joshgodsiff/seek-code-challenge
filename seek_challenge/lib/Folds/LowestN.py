@@ -75,7 +75,7 @@ class LowestN:
     self.lowestN = self.lowestNContiguous()
 
   def result(self):
-    return self.lowestN
+    return self.lowestN.q
 
   def lowestNContiguous(self) -> deque[Entry]:
     if self.mostRecent.isContiguous() and self.lowestN.isContiguous():
