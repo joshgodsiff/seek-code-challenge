@@ -1,11 +1,12 @@
 from collections import deque, Counter
-from Entry import Entry
+from dataclasses import dataclass, field
+from lib.Entry import Entry
 from copy import deepcopy
 from datetime import timedelta
 
 class BoolCounter:
   def __init__(self) -> None:
-    self.counter = Counter({True: 0, False: 0})
+    self.counter: Counter = Counter({True: 0, False: 0})
 
   def push(self, b: bool) -> None:
     updateC = {True: 0, False: 0}
@@ -20,12 +21,17 @@ class BoolCounter:
   def __getitem__(self, i):
     return self.counter[i]
 
-class LowestN:
+class LowestNCore:
   def __init__(self, n: int, delta: timedelta) -> None:
+    self.n: int = n
+    # This does not, and is not designed to work for n=1 or n=0
+    # It could easily be special-cased for n=1, but that case is degenerate
+    # And probably better handled elsewhere.
+    assert n >= 2
+    self.delta: timedelta = delta
     self.q: deque[Entry] = deque([], n)
-    self.sum = 0
-    self.delta = delta
-    self.contiguousCounter = BoolCounter()
+    self.sum: int = 0
+    self.contiguousCounter: BoolCounter = BoolCounter()
 
   def pop(self) -> Entry:
     p = deque.popleft(self.q)
@@ -59,13 +65,25 @@ class LowestN:
       self.contiguousCounter[False] == 0
     )
 
-def lowestNContiguous(mostRecent: LowestN, lowest3: LowestN) -> deque[Entry]:
-  if mostRecent.isContiguous() and lowest3.isContiguous():
-      if mostRecent.sum < lowest3.sum:
-        return deepcopy(mostRecent)
-      else:
-        return lowest3
-  elif mostRecent.isContiguous():
-      return deepcopy(mostRecent)
-  else:
-    return lowest3
+class LowestN:
+  def __init__(self, n: int, delta: timedelta) -> None:
+    self.mostRecent: LowestNCore = LowestNCore(n, delta)
+    self.lowestN: LowestNCore = LowestNCore(n, delta)
+
+  def fold(self, next: Entry):
+    self.mostRecent.push(next)
+    self.lowestN = self.lowestNContiguous()
+
+  def result(self):
+    return self.lowestN
+
+  def lowestNContiguous(self) -> deque[Entry]:
+    if self.mostRecent.isContiguous() and self.lowestN.isContiguous():
+        if self.mostRecent.sum < self.lowestN.sum:
+          return deepcopy(self.mostRecent)
+        else:
+          return self.lowestN
+    elif self.mostRecent.isContiguous():
+        return deepcopy(self.mostRecent)
+    else:
+      return self.lowestN

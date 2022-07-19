@@ -6,7 +6,7 @@ class Entry:
   num: int
   time: datetime
 
-  def contiguous(self, other, delta: timedelta):
+  def contiguous(self, other, delta: timedelta) -> bool:
     return self.time + delta == other.time
 
   def __str__(self) -> str:
