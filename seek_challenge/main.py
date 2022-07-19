@@ -1,5 +1,6 @@
 from dateutil import parser
 from datetime import timedelta
+import sys
 
 from lib.Entry import Entry, DayEntry
 from lib.Folds.DailyTotal import DailyTotal
@@ -8,7 +9,7 @@ from lib.Folds.LowestN import LowestN
 from lib.Folds.TopN import TopN
 from lib.Folds.Total import Total
 
-def processFile():
+def processFile(filename):
   halfHour = timedelta(minutes=30)
 
   total = "total"
@@ -23,7 +24,7 @@ def processFile():
     lowest3: LowestN(3, halfHour)
   })
 
-  with open("test-file.txt") as file:
+  with open(filename) as file:
     for line in file:
       (timeStr, _, num) = line.partition(" ")
       time = parser.parse(timeStr)
@@ -48,4 +49,6 @@ def processFile():
       print("  ", e)
 
 if __name__ == "__main__":
-  processFile()
+  print(str(sys.argv))
+  assert(len(sys.argv)) == 2
+  processFile(sys.argv[1])
