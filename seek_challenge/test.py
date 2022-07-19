@@ -112,6 +112,23 @@ def sum_of_lowest_n_fold_should_be_the_sum_of_the_lowest_n_window(nums, time, n)
 
   assert min(sums) == sumResults
 
+@given(
+  nums=st.lists(st.integers(min_value=0), min_size=10),
+  time=st.datetimes(),
+  n=st.integers(min_value=2, max_value=10)
+)
+def lowest_n_fold_of_non_contiguous_values_should_return_nothing(nums, time, n):
+  delta = timedelta(minutes=30)
+  f = LowestN(n=n, delta=delta)
+  entries = [Entry(num=m, time=time + (i * delta * 2)) for m, i in zip(nums, range(len(nums)))]
+
+  for e in entries:
+    f.fold(e)
+
+  results = f.result()
+
+  assert len(results) <= 1
+
 if __name__ == "__main__":
   test_entries_are_contiguous()
   total_fold_gives_sum()
